@@ -1,9 +1,12 @@
 import { ExtensionRuntime } from "../../ExtensionRuntime";
 import { commands } from "vscode";
+import { noop } from "../../../utils/noop";
+import { TaskDescriptor } from "../../executor/BaseTaskDescriptor";
 
 export async function support_mode(runtime: ExtensionRuntime) {
     let prev: { row: number, col: number } | undefined;
     let latestMode: string | undefined;
+    let lock: Function = noop;
     runtime.instance.on('grid_cursor_goto', (grid, row, col) => {
         if (prev) {
             switch (latestMode) {
@@ -53,5 +56,23 @@ export async function support_mode(runtime: ExtensionRuntime) {
             // selectPosition(row, col);
         }
     });
+    const modeChanged = TaskDescriptor.create<void>();
+    runtime.instance.on('mode_change', () => modeChanged.drop());
+    modeChanged
+        .and_then(takeLock)
+        .and_then(getLatestMode)
+        .and_then(releaseLock);
     return runtime;
+    function releaseLock() {
+        lock();
+    }
+    function takeLock() {
+        runtime.modeLock = new Promise(createLock);
+    }
+    function createLock(l: Function) {
+        lock = l;
+    }
+    function getLatestMode() {
+        return runtime.instance.nvim_get_mode();
+    }
 }

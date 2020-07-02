@@ -9,12 +9,12 @@ let filter = (): typeof FilterTaskDescriptor => {
 };
 let map = (): typeof MapTaskDescriptor => {
     const data = require('./Map');
-    filter = () => data.MapTaskDescriptor;
+    map = () => data.MapTaskDescriptor;
     return data.MapTaskDescriptor;
 };
 let repeat = (): typeof RepeaterDescriptor => {
     const data = require('./Repeater');
-    filter = () => data.RepeaterDescriptor;
+    repeat = () => data.RepeaterDescriptor;
     return data.RepeaterDescriptor;
 };
 export abstract class TaskDescriptor<TCurrent> {

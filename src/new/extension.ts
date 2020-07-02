@@ -23,4 +23,5 @@ export function activate(context: ExtensionContext) {
         extensionRuntime.dispose();
         extensionRuntime = undefined;
     }));
+    commands.executeCommand('evil.enable');
 }

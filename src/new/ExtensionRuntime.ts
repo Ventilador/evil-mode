@@ -2,7 +2,7 @@ import { window, workspace, TextDocument, TextEditor } from "vscode";
 import { attach } from "neovim";
 import { spawn } from "child_process";
 import { EventEmitter } from "events";
-import { UIEvents } from "../types/api";
+import { Vim } from "../types/api";
 import { Disposable } from "./disposable";
 import { TwoWayDocument } from "./TwoWayDocument";
 import { TaskDescriptor } from "./executor/BaseTaskDescriptor";
@@ -10,21 +10,24 @@ import { tab_changed } from "./tasks/vscode_to_vim/tab_changed";
 import { get_tab } from "./tasks/vscode_to_vim/get_tab";
 import { set_active } from "./tasks/vscode_to_vim/set_active";
 import { support_mode } from "./tasks/vim_to_vscode/support_mode";
+import { override_keyboard } from "./tasks/vscode_to_vim/override_keyboard";
 const configRuntime = TaskDescriptor.create<ExtensionRuntime>();
 configRuntime
+    .and_then(override_keyboard)
     .and_then(support_mode);
 
 export class ExtensionRuntime extends Disposable {
-    instance!: UIEvents;
+    instance!: Vim;
     docs: Record<string | number, TwoWayDocument | undefined> = {};
     active: TwoWayDocument | undefined;
-    editorChangedTaskQueue!: TaskDescriptor<TextEditor | undefined>;
-    configNewDocument!: TaskDescriptor<TwoWayDocument>;
-
+    editorChangedTaskQueue: TaskDescriptor<TextEditor | undefined> = TaskDescriptor.create<TextEditor | undefined>();
+    configNewDocument: TaskDescriptor<TwoWayDocument> = TaskDescriptor.create();
+    keyFromVsCode: TaskDescriptor<string> = TaskDescriptor.create();
+    modeLock: Promise<void> = Promise.resolve();
     tabsByVscodeFilepath: Record<string, TwoWayDocument> = {};
     tabsByVimId: Record<string, TwoWayDocument> = {};
     protected async asyncConstructor() {
-        this.editorChangedTaskQueue = TaskDescriptor.create<TextEditor | undefined>();
+        configRuntime.drop(this);
         this.editorChangedTaskQueue
             // remove undefineds
             .and_filter<TextEditor>(Boolean)
@@ -32,7 +35,6 @@ export class ExtensionRuntime extends Disposable {
             .and_then(get_tab(this))
             .and_then(set_active(this));
 
-        this.configNewDocument = TaskDescriptor.create();
         this.configNewDocument
             .tap(() => { })
             .tap(() => { });
@@ -49,7 +51,7 @@ export class ExtensionRuntime extends Disposable {
                 return vim.request(name, Array.from(arguments));
             } as any;
             return prev;
-        }, new EventEmitter() as unknown as UIEvents);
+        }, new EventEmitter() as unknown as Vim);
 
         this.subscribe(() => vim.quit());
         this.subscribe(window.onDidChangeActiveTextEditor(this.editorChangedTaskQueue.drop, this.editorChangedTaskQueue));

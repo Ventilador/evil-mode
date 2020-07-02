@@ -1,6 +1,5 @@
 import { Disposable } from "./disposable";
-import { TextDocument, TextEditor, Position } from "vscode";
-import { UIEvents } from "../types/api";
+import { TextEditor, Position } from "vscode";
 import { Tabpage, Window, Buffer } from "neovim";
 import { getDocLines } from "../utils/getLinesFromDoc";
 import { ExtensionRuntime } from "./ExtensionRuntime";
