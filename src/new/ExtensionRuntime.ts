@@ -2,7 +2,7 @@ import { window, workspace, TextDocument, TextEditor } from "vscode";
 import { attach } from "neovim";
 import { spawn } from "child_process";
 import { EventEmitter } from "events";
-import { Vim } from "../types/api";
+import { Vim, Keystroke } from "../types/api";
 import { Disposable } from "./disposable";
 import { TwoWayDocument } from "./TwoWayDocument";
 import { TaskDescriptor } from "./executor/BaseTaskDescriptor";
@@ -22,7 +22,7 @@ export class ExtensionRuntime extends Disposable {
     active: TwoWayDocument | undefined;
     editorChangedTaskQueue: TaskDescriptor<TextEditor | undefined> = TaskDescriptor.create<TextEditor | undefined>();
     configNewDocument: TaskDescriptor<TwoWayDocument> = TaskDescriptor.create();
-    keyFromVsCode: TaskDescriptor<string> = TaskDescriptor.create();
+    keyFromVsCode: TaskDescriptor<number> = TaskDescriptor.create();
     modeLock: Promise<void> = Promise.resolve();
     tabsByVscodeFilepath: Record<string, TwoWayDocument> = {};
     tabsByVimId: Record<string, TwoWayDocument> = {};

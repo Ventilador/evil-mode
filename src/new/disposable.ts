@@ -4,7 +4,9 @@ export class Disposable<T extends any[] = any[]> implements v.Disposable {
     private _$subs: v.Disposable[] = [];
     protected asyncConstructor(...args: T): Promise<this> { return Promise.resolve(this); }
     public readonly ready: Promise<this>;
-    constructor(...args: T) { this.ready = this.asyncConstructor(...args); }
+    constructor(...args: T) {
+        this.ready = Promise.resolve().then(() => this.asyncConstructor(...args));
+    }
 
     subscribe(dispose: (() => any) | v.Disposable) {
         if (typeof dispose === 'function') {

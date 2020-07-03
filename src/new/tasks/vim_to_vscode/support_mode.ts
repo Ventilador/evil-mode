@@ -61,6 +61,7 @@ export async function support_mode(runtime: ExtensionRuntime) {
     modeChanged
         .and_then(takeLock)
         .and_then(getLatestMode)
+        .and_then(update_status)
         .and_then(releaseLock);
     return runtime;
     function releaseLock() {
@@ -74,5 +75,8 @@ export async function support_mode(runtime: ExtensionRuntime) {
     }
     function getLatestMode() {
         return runtime.instance.nvim_get_mode();
+    }
+    function update_status(value: any) {
+
     }
 }

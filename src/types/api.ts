@@ -1,6 +1,14 @@
 import { NeovimClient } from 'neovim';
+export type Keystroke = {
+	pretty: string;
+	text: string;
+	keycode: number;
+	modifier: Modifier[];
+};
+
+export type Modifier = 'shift' | 'ctrl' | 'alt';
 export interface Vim extends NeovimClient {
-    on(eventName: "mode_info_set", cb: (enabled: boolean, cursor_styles: any[]) => any): this
+	on(eventName: "mode_info_set", cb: (enabled: boolean, cursor_styles: any[]) => any): this
 	on(eventName: "update_menu", cb: () => any): this
 	on(eventName: "busy_start", cb: () => any): this
 	on(eventName: "busy_stop", cb: () => any): this
@@ -60,7 +68,7 @@ export interface Vim extends NeovimClient {
 	on(eventName: "msg_showmode", cb: (content: any[]) => any): this
 	on(eventName: "msg_ruler", cb: (content: any[]) => any): this
 	on(eventName: "msg_history_show", cb: (entries: any[]) => any): this
-    nvim_buf_line_count(buffer: import('neovim').Buffer): Promise<number>;
+	nvim_buf_line_count(buffer: import('neovim').Buffer): Promise<number>;
 	buffer_get_line(buffer: import('neovim').Buffer, index: number): Promise<string>;
 	nvim_buf_attach(buffer: import('neovim').Buffer, send_buffer: boolean, opts: Record<string, any>): Promise<boolean>;
 	nvim_buf_detach(buffer: import('neovim').Buffer): Promise<boolean>;
