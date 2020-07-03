@@ -1,25 +1,22 @@
 import { window, workspace, TextDocument, TextEditor } from "vscode";
-import { attach } from "neovim";
-import { spawn } from "child_process";
-import { EventEmitter } from "events";
-import { Vim, Keystroke } from "../types/api";
+import { Vim } from "../types/api";
 import { Disposable } from "./disposable";
 import { TwoWayDocument } from "./TwoWayDocument";
 import { TaskDescriptor } from "./executor/BaseTaskDescriptor";
 import { tab_changed } from "./tasks/vscode_to_vim/tab_changed";
 import { get_tab } from "./tasks/vscode_to_vim/get_tab";
 import { set_active } from "./tasks/vscode_to_vim/set_active";
-import { support_mode } from "./tasks/vim_to_vscode/support_mode";
-import { override_keyboard } from "./tasks/vscode_to_vim/override_keyboard";
-const configRuntime = TaskDescriptor.create<ExtensionRuntime>();
-configRuntime
-    .and_then(override_keyboard)
-    .and_then(support_mode);
+import { Mode } from "./tasks/vim_to_vscode/support_mode";
+import { createEventHandler } from "../types/eventHandler";
+import { createVim } from "../types/createVim";
+
 
 export class ExtensionRuntime extends Disposable {
     instance!: Vim;
     docs: Record<string | number, TwoWayDocument | undefined> = {};
     active: TwoWayDocument | undefined;
+    onModeChanged!: (cb: (newMode: Mode) => any) => any;
+    modeChanged!: (newMode: Mode) => void;
     editorChangedTaskQueue: TaskDescriptor<TextEditor | undefined> = TaskDescriptor.create<TextEditor | undefined>();
     configNewDocument: TaskDescriptor<TwoWayDocument> = TaskDescriptor.create();
     keyFromVsCode: TaskDescriptor<number> = TaskDescriptor.create();
@@ -27,7 +24,9 @@ export class ExtensionRuntime extends Disposable {
     tabsByVscodeFilepath: Record<string, TwoWayDocument> = {};
     tabsByVimId: Record<string, TwoWayDocument> = {};
     protected async asyncConstructor() {
-        configRuntime.drop(this);
+        const modeHandler = createEventHandler();
+        this.modeChanged = modeHandler.emit;
+        this.onModeChanged = modeHandler.on;
         this.editorChangedTaskQueue
             // remove undefineds
             .and_filter<TextEditor>(Boolean)
@@ -40,20 +39,8 @@ export class ExtensionRuntime extends Disposable {
             .tap(() => { });
 
 
-        const nvim_proc = spawn('nvim', ['-u', 'NONE', '-N', '--embed'], {});
-        const vim = attach({ proc: nvim_proc });
-        const api = await vim.requestApi();
-        const data = api[1];
-        const fns = data.functions as { name: string }[];
-
-        this.instance = fns.reduce((prev, { name }) => {
-            (prev as any)[name] = function () {
-                return vim.request(name, Array.from(arguments));
-            } as any;
-            return prev;
-        }, new EventEmitter() as unknown as Vim);
-
-        this.subscribe(() => vim.quit());
+        this.instance = await createVim(this);
+        this.subscribe(() => this.instance.quit());
         this.subscribe(window.onDidChangeActiveTextEditor(this.editorChangedTaskQueue.drop, this.editorChangedTaskQueue));
         this.subscribe(workspace.onDidCloseTextDocument(this.onDocumentClosed, this));
         this.editorChangedTaskQueue.drop(window.activeTextEditor);

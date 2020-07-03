@@ -8,6 +8,7 @@
 		],
 		"sourceMap": true,
 		"rootDir": "src",
+		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"strict": true /* enable all strict type-checking options */
 		/* Additional Checks */

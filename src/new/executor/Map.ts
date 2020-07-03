@@ -8,6 +8,8 @@ export class MapTaskDescriptor<TCurrent, T> extends TaskDescriptor<T>{
         const next = this._next;
         if (next) {
             Promise.resolve(this.cb(value)).then(c => next.drop(c));
+        } else {
+            this.cb(value);
         }
     }
 

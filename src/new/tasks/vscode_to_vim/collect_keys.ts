@@ -1,7 +1,7 @@
 import { ExtensionRuntime } from "../../ExtensionRuntime";
-import { Keystroke } from "../../../types/api";
+import { Keystroke, Vim } from "../../../types/api";
 
-export function collect_keys(runtime: ExtensionRuntime) {
+export function collect_keys(runtime: ExtensionRuntime, vim: Vim) {
     let lock: Function | undefined;
     let lockPromise: Promise<void> | undefined;
     let collected: number[] | undefined;
