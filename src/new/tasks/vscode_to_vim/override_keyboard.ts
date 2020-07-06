@@ -1,19 +1,27 @@
 import { ExtensionRuntime } from "../../ExtensionRuntime";
 import { commands } from "vscode";
-import { Keystroke, Vim } from "../../../types/api";
-import { KEYS } from "../../../keys/Keys";
+import { Vim } from "../../../types/api";
+import { fromChar, fromCode } from "../../../keys";
 const cache: any = {};
-export function override_keyboard(runtime: ExtensionRuntime, vim: Vim): ExtensionRuntime {
+export function override_keyboard(runtime: ExtensionRuntime, vim: Vim): void {
     runtime.subscribe(commands.registerCommand('type', ({ text }: { text: string }) => {
-        for (let i = 0; i < text.length; i++) {
-            vim.nvim_input(KEYS.fromKeyCode(text.charCodeAt(i)));
+        vim.nvim_input(text.split('').map(mapInvalidKeys).join(''));
+    }));
+
+    function mapInvalidKeys(key: string) {
+        switch (key) {
+            case '<':
+                return '<lt>';
+            case '|':
+                return '<Bar>';
+            case '\\':
+                return '<Bslash>';
+            default:
+                return key;
         }
-    }));
-    runtime.subscribe(commands.registerCommand('evil.key', ev => {
-        debugger;
-    }));
-    return runtime;
-    function send(key: Keystroke) {
-        // keyFromVsCode.drop(key);
     }
+
+    runtime.subscribe(commands.registerCommand('evil.key', ev => {
+        vim.nvim_input(fromCode(+ev));
+    }));
 }

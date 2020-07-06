@@ -1,4 +1,6 @@
 // @ts-check
+require('./inspector');
+
 const neo = require('neovim');
 const child = require('child_process');
 const {
@@ -13,10 +15,11 @@ const vim = neo.attach({
 vim.requestApi().then(res => {
         const api = res[1];
 
-        return `import { NeovimClient } from 'neovim';
-export interface Vim extends NeovimClient {
+        return `import { EventEmitter } from 'events';        
+export interface Vim extends EventEmitter{
     ${getEvents(api)}
     ${getMethods(api)}
+    quit(): void;
 }`
     })
     .then(content => {
@@ -31,7 +34,7 @@ function getEvents({
         name,
         parameters
     }, i) => {
-        return `on(eventName: "${name}", cb: (${parameters.map(j=> `${j[1]}: ${getTypeFor(j[0])}`).join(', ')}) => any): this`;
+        return `on(eventName: "${name}", cb: (${parameters.length? `args: [${parameters.map(j=> `${getTypeFor(j[0])}/*${j[1]}*/`).join(', ')}]`:''}) => any): this`;
     }).join('\r\n\t');
 }
 

@@ -1,71 +1,88 @@
 import { ExtensionRuntime } from "../../ExtensionRuntime";
-import { commands } from "vscode";
+import { commands, TextEditorCursorStyle } from "vscode";
 import { Vim } from "../../../types/api";
-export type Mode = '';
-export async function support_mode(runtime: ExtensionRuntime, vim: Vim) {
-    let prev: { row: number, col: number } | undefined;
-    let latestMode: string | undefined;
-    vim.on('grid_cursor_goto', (grid, row, col) => {
-        if (prev) {
-            switch (latestMode) {
-                case 'visual-block':
-                    const prevRow = prev.row;
-                    if (prevRow !== row) {
-                        let length: number;
-                        let action: string;
-                        if (row > prevRow) {
-                            length = row - prevRow;
-                            action = 'cursorColumnSelectDown';
-                        } else {
-                            length = prevRow - row;
-                            action = 'cursorColumnSelectUp';
-                        }
-                        while (length--) {
-                            commands.executeCommand(action);
-                        }
-                    }
-                    const prevCol = prev.col;
-                    if (prevCol !== col) {
-                        let length: number;
-                        let action: string;
-                        if (col > prevCol) {
-                            length = col - prevCol;
-                            action = 'cursorColumnSelectRight';
-                        } else {
-                            length = prevCol - col;
-                            action = 'cursorColumnSelectLeft';
-                        }
-                        while (length--) {
-                            commands.executeCommand(action);
-                        }
-                    }
-                    break;
-                case 'visual-line':
-                    break;
-                case 'visual':
-                    break;
-                default:
-                    // selectPosition(row, col);
-                    break;
-            }
-            prev = { row, col };
-        } else {
-            prev = { row, col };
-            // selectPosition(row, col);
-        }
-    });
+import { fromChar } from "../../../keys";
+export type ParsedMode = {
+    text: string;
+    color: string | undefined;
+    cursor: TextEditorCursorStyle;
+}
+export type Mode = 'normal' | 'insert' | 'visual-block' | 'visual-line' | 'visual' | 'replace';
+export function support_mode(runtime: ExtensionRuntime, vim: Vim): void {
     vim.on('mode_change', () => {
         getLatestMode().then(parseMode).then(runtime.modeChanged);
     });
+    /**
+     * switch (mode) {
+            case 'replace':
+                text = '-- REPLACE --';
+                break;
+            case 'insert':
+                text = '-- INSERT --';
+                color = runtime.insertForeground;
+                break;
+            case 'normal':
+                text = '-- NORMAL --';
+                break;
+            case 'visual':
+            case 'visual-block':
+            case 'visual-line':
+                text = '-- VISUAL --';
+                color = runtime.visualForeground;
+                break;
+        }
+     */
+    const modesCache = {
+        n: {
+            text: '-- NORMAL --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Block
+        },
+        i: {
+            text: '-- INSERT --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Line
+        },
+        r: {
+            text: '-- REPLACE --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Underline
+        },
+        V: {
+            text: '-- VISUAL LINE --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Block
+        },
+        v: {
+            text: '-- VISUAL --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Block
+        },
+        '<S-r>': {
+            text: '-- REPLACE --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Underline
+        },
+        '<C-v>': {
+            text: '-- VISUAL BLOCK --',
+            color: undefined,
+            cursor: TextEditorCursorStyle.Block
+        },
+    } as Record<string, ParsedMode>;
 
-    return runtime;
+    function parseMode(a: { mode: string }): ParsedMode {
+        const mode = a.mode;
+        const result = fromChar(mode);
+        const maybeResult = modesCache[result];
+        if (maybeResult) {
+            return maybeResult;
+        }
 
-    function parseMode(mode: unknown): Mode {
         debugger;
-        return '';
+        throw new Error('Unknown mode');
     }
 
-    function getLatestMode() {
-        return vim.nvim_get_mode();
+    function getLatestMode(): Promise<{ mode: string }> {
+        return vim.nvim_get_mode() as any;
     }
 }

@@ -4,6 +4,11 @@ import { ExtensionRuntime } from "./ExtensionRuntime";
 
 export function activate(context: ExtensionContext) {
     let extensionRuntime: Disposable | undefined;
+    let save = false;
+    if (workspace.getConfiguration('files').get('insertFinalNewline') === false) {
+        workspace.getConfiguration('files').update('insertFinalNewline', true);
+    }
+   
     context.subscriptions.push(commands.registerCommand('evil.enable', () => {
         if (extensionRuntime) {
             Snitch.warn({ text: 'Already running' });
@@ -11,6 +16,7 @@ export function activate(context: ExtensionContext) {
         }
         workspace.getConfiguration('evil').update('enabled', true);
         extensionRuntime = new ExtensionRuntime();
+        context.subscriptions.push(extensionRuntime);
     }));
 
     context.subscriptions.push(commands.registerCommand('evil.disable', () => {
@@ -20,6 +26,10 @@ export function activate(context: ExtensionContext) {
         }
 
         workspace.getConfiguration('evil').update('enabled', false);
+        const index = context.subscriptions.indexOf(extensionRuntime);
+        if (index !== -1) {
+            context.subscriptions.splice(context.subscriptions.indexOf(extensionRuntime), 1);
+        }
         extensionRuntime.dispose();
         extensionRuntime = undefined;
     }));

@@ -1,11 +1,11 @@
 import * as v from 'vscode';
 
-export class Disposable<T extends any[] = any[]> implements v.Disposable {
+export class Disposable implements v.Disposable {
     private _$subs: v.Disposable[] = [];
-    protected asyncConstructor(...args: T): Promise<this> { return Promise.resolve(this); }
-    public readonly ready: Promise<this>;
-    constructor(...args: T) {
-        this.ready = Promise.resolve().then(() => this.asyncConstructor(...args));
+    static Dispose(val: Disposable) {
+        val.dispose();
+    }
+    constructor() {
     }
 
     subscribe(dispose: (() => any) | v.Disposable) {

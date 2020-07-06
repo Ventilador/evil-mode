@@ -1,4 +1,4 @@
-import { noop } from "../utils/noop";
+import { noop } from "./noop";
 
 export function createEventHandler() {
     let fn = noop;

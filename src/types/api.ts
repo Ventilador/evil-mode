@@ -1,74 +1,66 @@
-import { NeovimClient } from 'neovim';
-export type Keystroke = {
-	pretty: string;
-	text: string;
-	keycode: number;
-	modifier: Modifier[];
-};
-
-export type Modifier = 'shift' | 'ctrl' | 'alt';
-export interface Vim extends NeovimClient {
-	on(eventName: "mode_info_set", cb: (enabled: boolean, cursor_styles: any[]) => any): this
+import { EventEmitter } from 'events';        
+export interface Vim extends EventEmitter{
+    on(eventName: "mode_info_set", cb: (args: [boolean/*enabled*/, any[]/*cursor_styles*/]) => any): this
 	on(eventName: "update_menu", cb: () => any): this
 	on(eventName: "busy_start", cb: () => any): this
 	on(eventName: "busy_stop", cb: () => any): this
 	on(eventName: "mouse_on", cb: () => any): this
 	on(eventName: "mouse_off", cb: () => any): this
-	on(eventName: "mode_change", cb: (mode: string, mode_idx: number) => any): this
+	on(eventName: "mode_change", cb: (args: [string/*mode*/, number/*mode_idx*/]) => any): this
 	on(eventName: "bell", cb: () => any): this
 	on(eventName: "visual_bell", cb: () => any): this
 	on(eventName: "flush", cb: () => any): this
 	on(eventName: "suspend", cb: () => any): this
-	on(eventName: "set_title", cb: (title: string) => any): this
-	on(eventName: "set_icon", cb: (icon: string) => any): this
-	on(eventName: "option_set", cb: (name: string, value: any) => any): this
-	on(eventName: "update_fg", cb: (fg: number) => any): this
-	on(eventName: "update_bg", cb: (bg: number) => any): this
-	on(eventName: "update_sp", cb: (sp: number) => any): this
-	on(eventName: "resize", cb: (width: number, height: number) => any): this
+	on(eventName: "set_title", cb: (args: [string/*title*/]) => any): this
+	on(eventName: "set_icon", cb: (args: [string/*icon*/]) => any): this
+	on(eventName: "option_set", cb: (args: [string/*name*/, any/*value*/]) => any): this
+	on(eventName: "update_fg", cb: (args: [number/*fg*/]) => any): this
+	on(eventName: "update_bg", cb: (args: [number/*bg*/]) => any): this
+	on(eventName: "update_sp", cb: (args: [number/*sp*/]) => any): this
+	on(eventName: "resize", cb: (args: [number/*width*/, number/*height*/]) => any): this
 	on(eventName: "clear", cb: () => any): this
 	on(eventName: "eol_clear", cb: () => any): this
-	on(eventName: "cursor_goto", cb: (row: number, col: number) => any): this
-	on(eventName: "highlight_set", cb: (attrs: Record<string, any>) => any): this
-	on(eventName: "put", cb: (str: string) => any): this
-	on(eventName: "set_scroll_region", cb: (top: number, bot: number, left: number, right: number) => any): this
-	on(eventName: "scroll", cb: (count: number) => any): this
-	on(eventName: "default_colors_set", cb: (rgb_fg: number, rgb_bg: number, rgb_sp: number, cterm_fg: number, cterm_bg: number) => any): this
-	on(eventName: "hl_attr_define", cb: (id: number, rgb_attrs: Record<string, any>, cterm_attrs: Record<string, any>, info: any[]) => any): this
-	on(eventName: "hl_group_set", cb: (name: string, id: number) => any): this
-	on(eventName: "grid_resize", cb: (grid: number, width: number, height: number) => any): this
-	on(eventName: "grid_clear", cb: (grid: number) => any): this
-	on(eventName: "grid_cursor_goto", cb: (grid: number, row: number, col: number) => any): this
-	on(eventName: "grid_line", cb: (grid: number, row: number, col_start: number, data: any[]) => any): this
-	on(eventName: "grid_scroll", cb: (grid: number, top: number, bot: number, left: number, right: number, rows: number, cols: number) => any): this
-	on(eventName: "grid_destroy", cb: (grid: number) => any): this
-	on(eventName: "win_pos", cb: (grid: number, win: import('neovim').Window, startrow: number, startcol: number, width: number, height: number) => any): this
-	on(eventName: "win_float_pos", cb: (grid: number, win: import('neovim').Window, anchor: string, anchor_grid: number, anchor_row: number, anchor_col: number, focusable: boolean) => any): this
-	on(eventName: "win_external_pos", cb: (grid: number, win: import('neovim').Window) => any): this
-	on(eventName: "win_hide", cb: (grid: number) => any): this
-	on(eventName: "win_close", cb: (grid: number) => any): this
-	on(eventName: "msg_set_pos", cb: (grid: number, row: number, scrolled: boolean, sep_char: string) => any): this
-	on(eventName: "popupmenu_show", cb: (items: any[], selected: number, row: number, col: number, grid: number) => any): this
+	on(eventName: "cursor_goto", cb: (args: [number/*row*/, number/*col*/]) => any): this
+	on(eventName: "highlight_set", cb: (args: [Record<string, any>/*attrs*/]) => any): this
+	on(eventName: "put", cb: (args: [string/*str*/]) => any): this
+	on(eventName: "set_scroll_region", cb: (args: [number/*top*/, number/*bot*/, number/*left*/, number/*right*/]) => any): this
+	on(eventName: "scroll", cb: (args: [number/*count*/]) => any): this
+	on(eventName: "default_colors_set", cb: (args: [number/*rgb_fg*/, number/*rgb_bg*/, number/*rgb_sp*/, number/*cterm_fg*/, number/*cterm_bg*/]) => any): this
+	on(eventName: "hl_attr_define", cb: (args: [number/*id*/, Record<string, any>/*rgb_attrs*/, Record<string, any>/*cterm_attrs*/, any[]/*info*/]) => any): this
+	on(eventName: "hl_group_set", cb: (args: [string/*name*/, number/*id*/]) => any): this
+	on(eventName: "grid_resize", cb: (args: [number/*grid*/, number/*width*/, number/*height*/]) => any): this
+	on(eventName: "grid_clear", cb: (args: [number/*grid*/]) => any): this
+	on(eventName: "grid_cursor_goto", cb: (args: [number/*grid*/, number/*row*/, number/*col*/]) => any): this
+	on(eventName: "grid_line", cb: (args: [number/*grid*/, number/*row*/, number/*col_start*/, any[]/*data*/]) => any): this
+	on(eventName: "grid_scroll", cb: (args: [number/*grid*/, number/*top*/, number/*bot*/, number/*left*/, number/*right*/, number/*rows*/, number/*cols*/]) => any): this
+	on(eventName: "grid_destroy", cb: (args: [number/*grid*/]) => any): this
+	on(eventName: "win_pos", cb: (args: [number/*grid*/, import('neovim').Window/*win*/, number/*startrow*/, number/*startcol*/, number/*width*/, number/*height*/]) => any): this
+	on(eventName: "win_float_pos", cb: (args: [number/*grid*/, import('neovim').Window/*win*/, string/*anchor*/, number/*anchor_grid*/, number/*anchor_row*/, number/*anchor_col*/, boolean/*focusable*/]) => any): this
+	on(eventName: "win_external_pos", cb: (args: [number/*grid*/, import('neovim').Window/*win*/]) => any): this
+	on(eventName: "win_hide", cb: (args: [number/*grid*/]) => any): this
+	on(eventName: "win_close", cb: (args: [number/*grid*/]) => any): this
+	on(eventName: "msg_set_pos", cb: (args: [number/*grid*/, number/*row*/, boolean/*scrolled*/, string/*sep_char*/]) => any): this
+	on(eventName: "popupmenu_show", cb: (args: [any[]/*items*/, number/*selected*/, number/*row*/, number/*col*/, number/*grid*/]) => any): this
 	on(eventName: "popupmenu_hide", cb: () => any): this
-	on(eventName: "popupmenu_select", cb: (selected: number) => any): this
-	on(eventName: "tabline_update", cb: (current: import('neovim').Tabpage, tabs: any[]) => any): this
-	on(eventName: "cmdline_show", cb: (content: any[], pos: number, firstc: string, prompt: string, indent: number, level: number) => any): this
-	on(eventName: "cmdline_pos", cb: (pos: number, level: number) => any): this
-	on(eventName: "cmdline_special_char", cb: (c: string, shift: boolean, level: number) => any): this
-	on(eventName: "cmdline_hide", cb: (level: number) => any): this
-	on(eventName: "cmdline_block_show", cb: (lines: any[]) => any): this
-	on(eventName: "cmdline_block_append", cb: (lines: any[]) => any): this
+	on(eventName: "popupmenu_select", cb: (args: [number/*selected*/]) => any): this
+	on(eventName: "tabline_update", cb: (args: [import('neovim').Tabpage/*current*/, any[]/*tabs*/]) => any): this
+	on(eventName: "cmdline_show", cb: (args: [any[]/*content*/, number/*pos*/, string/*firstc*/, string/*prompt*/, number/*indent*/, number/*level*/]) => any): this
+	on(eventName: "cmdline_pos", cb: (args: [number/*pos*/, number/*level*/]) => any): this
+	on(eventName: "cmdline_special_char", cb: (args: [string/*c*/, boolean/*shift*/, number/*level*/]) => any): this
+	on(eventName: "cmdline_hide", cb: (args: [number/*level*/]) => any): this
+	on(eventName: "cmdline_block_show", cb: (args: [any[]/*lines*/]) => any): this
+	on(eventName: "cmdline_block_append", cb: (args: [any[]/*lines*/]) => any): this
 	on(eventName: "cmdline_block_hide", cb: () => any): this
-	on(eventName: "wildmenu_show", cb: (items: any[]) => any): this
-	on(eventName: "wildmenu_select", cb: (selected: number) => any): this
+	on(eventName: "wildmenu_show", cb: (args: [any[]/*items*/]) => any): this
+	on(eventName: "wildmenu_select", cb: (args: [number/*selected*/]) => any): this
 	on(eventName: "wildmenu_hide", cb: () => any): this
-	on(eventName: "msg_show", cb: (kind: string, content: any[], replace_last: boolean) => any): this
+	on(eventName: "msg_show", cb: (args: [string/*kind*/, any[]/*content*/, boolean/*replace_last*/]) => any): this
 	on(eventName: "msg_clear", cb: () => any): this
-	on(eventName: "msg_showcmd", cb: (content: any[]) => any): this
-	on(eventName: "msg_showmode", cb: (content: any[]) => any): this
-	on(eventName: "msg_ruler", cb: (content: any[]) => any): this
-	on(eventName: "msg_history_show", cb: (entries: any[]) => any): this
-	nvim_buf_line_count(buffer: import('neovim').Buffer): Promise<number>;
+	on(eventName: "msg_showcmd", cb: (args: [any[]/*content*/]) => any): this
+	on(eventName: "msg_showmode", cb: (args: [any[]/*content*/]) => any): this
+	on(eventName: "msg_ruler", cb: (args: [any[]/*content*/]) => any): this
+	on(eventName: "msg_history_show", cb: (args: [any[]/*entries*/]) => any): this
+    nvim_buf_line_count(buffer: import('neovim').Buffer): Promise<number>;
 	buffer_get_line(buffer: import('neovim').Buffer, index: number): Promise<string>;
 	nvim_buf_attach(buffer: import('neovim').Buffer, send_buffer: boolean, opts: Record<string, any>): Promise<boolean>;
 	nvim_buf_detach(buffer: import('neovim').Buffer): Promise<boolean>;
@@ -272,4 +264,5 @@ export interface Vim extends NeovimClient {
 	window_get_position(window: import('neovim').Window): Promise<number[]>;
 	window_get_tabpage(window: import('neovim').Window): Promise<import('neovim').Tabpage>;
 	window_is_valid(window: import('neovim').Window): Promise<boolean>;
+    quit(): void;
 }
