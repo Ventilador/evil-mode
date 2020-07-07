@@ -1,43 +1,19 @@
 import { spawn } from "child_process";
 import { EventEmitter } from "events";
-import { encode, decode, ExtensionCodec } from '@msgpack/msgpack';
-import { request } from "http";
+import { encode, DecodeOptions, Decoder } from '@msgpack/msgpack';
+import { extensionCodec } from './mappers';
 import { Vim } from "../types/api";
-const extensionCodec = new ExtensionCodec();
-const opts = { extensionCodec };
+const opts: DecodeOptions = { extensionCodec, };
 
-
-export class Extn {
-    static encode(input: any) {
-        if (input.__val) {
-            return encode(input.id);
-        }
-        return null;
+function decodeMulti(value: any, fn: Function) {
+    const decoder = new Decoder(extensionCodec, undefined);
+    decoder.setBuffer(value); // decodeSync() requires only one buffer
+    while (decoder.hasRemaining()) {
+        fn(decoder.decodeSync());
     }
-    static decode(data: any) {
-        return new this(decode(data) as number);
-    }
-    constructor(public id: number) { }
+
 }
 
-(Extn as any).prototype['__val'] = true;
-export class Buf extends Extn {
-    static type = 0;
-    private __hook = 'buf';
-}
-export class Window extends Extn {
-    static type = 1;
-
-    private __hook = 'win';
-}
-export class Tab extends Extn {
-    static type = 2;
-    private __hook = 'tab';
-}
-
-extensionCodec.register(Buf);
-extensionCodec.register(Window);
-extensionCodec.register(Tab);
 
 export function run(): Promise<EventEmitter & Vim> {
     let lastId = -1;
@@ -60,7 +36,16 @@ export function run(): Promise<EventEmitter & Vim> {
     });
 
     function newData(buf: Buffer) {
-        const msg = decode(buf, opts) as any[];
+        try {
+            decodeMulti(buf, runSingle);
+        } catch (err) {
+            err;
+            debugger;
+            return;
+        }
+    }
+
+    function runSingle(msg: any[]) {
         const msgType = msg[0];
         if (msgType === 0) {
             // request
@@ -75,7 +60,6 @@ export function run(): Promise<EventEmitter & Vim> {
             //   - msg[2]: error(if any)
             //   - msg[3]: result(if not errored)
             const id = msg[1];
-            console.log('reciving:', id);
             const handler = get(id);
             release(id);
             handler(msg[2], msg[3]);
@@ -116,6 +100,8 @@ export function run(): Promise<EventEmitter & Vim> {
         return new Promise<any>((resolve, reject) => {
             send([0, getId((e: any, v: any) => {
                 if (e) {
+                    method;
+                    args;
                     debugger;
                     reject(e);
                 } else {
@@ -138,6 +124,7 @@ export function run(): Promise<EventEmitter & Vim> {
         throw new Error('Invalid id');
     }
     function release(id: number) {
+        // delete pending2[id];
         if (id > pending.length) {
             throw new Error('Invalid id');
         }
@@ -146,15 +133,15 @@ export function run(): Promise<EventEmitter & Vim> {
     }
 
     function getId(cb: Function) {
+        // pending2[id++] = cb;
+        // return id - 1;
         if (lastId === -1) {
             const result = pending.indexOf(null);
             if (result !== -1) {
-                console.log('sending:', result);
                 pending[result] = cb;
                 return result;
             } else {
                 pending.push(cb);
-                console.log('sending:', pending.length - 1);
 
                 return pending.length - 1;
             }
@@ -162,7 +149,6 @@ export function run(): Promise<EventEmitter & Vim> {
             const id = lastId;
             pending[id] = cb;
             lastId = -1;
-            console.log('sending:', id);
 
             return id;
         }

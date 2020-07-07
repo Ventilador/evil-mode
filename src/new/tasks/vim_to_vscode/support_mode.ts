@@ -12,6 +12,10 @@ export function support_mode(runtime: ExtensionRuntime, vim: Vim): void {
     vim.on('mode_change', () => {
         getLatestMode().then(parseMode).then(runtime.modeChanged);
     });
+
+    vim.on('mode_info_set', info => {
+        debugger;
+    });
     /**
      * switch (mode) {
             case 'replace':
@@ -72,7 +76,7 @@ export function support_mode(runtime: ExtensionRuntime, vim: Vim): void {
 
     function parseMode(a: { mode: string }): ParsedMode {
         const mode = a.mode;
-        const result = fromChar(mode);
+        const result = fromChar(mode[0]);
         const maybeResult = modesCache[result];
         if (maybeResult) {
             return maybeResult;

@@ -62,15 +62,10 @@ export class TwoWayDocument extends Disposable {
         setReadonly(this, 'buffer', buf);
         this.runtime.tabsByVimId[buf.id] = this;
         await prom;
-        this.runtime.instance.nvim_buf_attach(buf, false, {});
 
-        console.log('tab:', await this.tabId.number);
-        console.log('window:', this.window.id);
-        console.log('buffer:', this.buffer.id);
-
-        // this.runtime.instance.nvim_win_set_buf(this.window, this.buffer);
-        // this.runtime.instance.nvim_buf_set_lines(this.buffer, 0, 0, false, getDocLines(this.editor));
-        startLooping(this.buffer, this.editor, this.runtime.instance);
+        if (process.env.NODE_ENV !== 'production') {
+            startLooping(this.buffer, this.editor, this.runtime.instance);
+        }
         this.vscodeVer = this.editor.document.version;
         return this;
     }
