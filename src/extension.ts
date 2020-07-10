@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Vim } from './types/api';
-import { run } from './utils/run-nvim';
+import { runVim } from './utils/run-nvim';
 // import { connect } from './vim';
 // import { SupportKeyboard } from './support/keyboard';
 // import { TabController } from './support/tabs';

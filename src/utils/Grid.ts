@@ -1,6 +1,6 @@
 import { Disposable } from "../new/disposable";
 import { ExtensionRuntime } from "../new/ExtensionRuntime";
-import { Position, Range, commands, Selection, TextEditorCursorStyle } from "vscode";
+import { Position, Range, commands, Selection, TextEditorCursorStyle, TextEditor, TextEditorDecorationType, ThemeColor, window } from "vscode";
 import { TwoWayDocument } from "../new/TwoWayDocument";
 
 export class HighlightGrid extends Disposable {
@@ -11,51 +11,8 @@ export class HighlightGrid extends Disposable {
         super();
         const editor = doc.editor;
         this.moveCursor = (row, col) => {
-            if (row === editor.selection.active.line && col === editor.selection.active.character) {
-                return;
-            }
-
-            tryMovin(row, col).then(after(row, col));
+            editor.selection = new Selection(new Position(row, col), new Position(row, col));
         };
-        function after(row: number, col: number) {
-            return function () {
-                if (row >= editor.document.lineCount) {
-                    debugger;
-                }
-                if (editor.selection.active.character !== col || editor.selection.active.line !== row) {
-                    editor.selection = new Selection(new Position(row, col), new Position(row, col));
-                }
-            };
-        }
-        function tryMovin(row: number, col: number) {
-            const selected = editor.selection.active;
-            const vertical = selected.line - row;
-            const horizontal = selected.character - col;
-            const proms = [];
-
-            if (vertical) {
-                proms.push(commands.executeCommand('cursorMove', {
-                    to: vertical > 0 ? 'up' : 'down',
-                    value: Math.abs(vertical)
-                }));
-            }
-
-            if (horizontal) {
-                proms.push(commands.executeCommand('cursorMove', {
-                    to: horizontal > 0 ? 'left' : 'right',
-                    value: Math.abs(horizontal)
-                }));
-            }
-
-            if (proms.length === 0) {
-                throw new Error('No action');
-            }
-
-            if (proms.length === 1) {
-                return proms[0];
-            }
-            return Promise.all(proms);
-        }
     }
 
     cursorStyle(style: TextEditorCursorStyle) {
@@ -67,6 +24,10 @@ export class HighlightGrid extends Disposable {
     }
     removeHighlight(row: number, col: number, span: number) {
         this.getCachedLine(row).remove(col, span);
+    }
+
+    update(row: number, col: number, data: any[]) {
+        this.getCachedLine(row).update(col, data);
     }
 
     record() {
@@ -100,6 +61,7 @@ export class HighlightGrid extends Disposable {
     };
 }
 
+
 class CachedLine {
     tentatives: number[] = [];
     private changed = false;
@@ -115,6 +77,10 @@ class CachedLine {
             }
             this.tentatives[i] = 1;
         }
+    }
+
+    update(col: number, data: any[]) {
+
     }
 
     remove(from: number, to: number) {

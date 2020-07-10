@@ -16,9 +16,9 @@ import { baseOptions } from "./vimrc";
 import { move_cursor } from "../new/tasks/vim_to_vscode/move_cursor";
 import { cursor_style } from "../new/tasks/vim_to_vscode/cursor_style";
 import { buffer_changes } from "../new/tasks/vim_to_vscode/buffer_changes";
-import { run } from "./run-nvim";
+import { runVim } from "./run-nvim";
 export function createVim(runtime: ExtensionRuntime): Promise<any> {
-    return run().then(instance => {
+    return runVim().then(instance => {
         runtime.instance = instance;
         update_mode(runtime);
         cursor_style(runtime);

@@ -19,8 +19,9 @@ vim.requestApi().then(res => {
 export interface Vim extends EventEmitter{
     ${getEvents(api)}
     ${getMethods(api)}
-    quit(): void;
-}`
+    quit(): Promise<void>;
+    raw(value: string | Uint8Array): void;
+}`;
     })
     .then(content => {
         vim.quit();

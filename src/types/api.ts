@@ -264,5 +264,6 @@ export interface Vim extends EventEmitter{
 	window_get_position(window: import('neovim').Window): Promise<number[]>;
 	window_get_tabpage(window: import('neovim').Window): Promise<import('neovim').Tabpage>;
 	window_is_valid(window: import('neovim').Window): Promise<boolean>;
-    quit(): void;
+    quit(): Promise<void>;
+    raw(value: string | Uint8Array): void;
 }

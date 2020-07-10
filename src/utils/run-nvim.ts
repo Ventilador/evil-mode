@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { encode, DecodeOptions, Decoder } from '@msgpack/msgpack';
 import { extensionCodec } from './mappers';
 import { Vim } from "../types/api";
+import { noop, tryCatchVoid } from "./noop";
 const opts: DecodeOptions = { extensionCodec, };
 
 function decodeMulti(value: any, fn: Function) {
@@ -11,11 +12,10 @@ function decodeMulti(value: any, fn: Function) {
     while (decoder.hasRemaining()) {
         fn(decoder.decodeSync());
     }
-
 }
 
-
-export function run(): Promise<EventEmitter & Vim> {
+export type OnEvent = (event: string, calls: any[]) => void;
+export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
     let lastId = -1;
     const nvim_proc = spawn('nvim', [
         '-u', 'NONE',
@@ -23,7 +23,7 @@ export function run(): Promise<EventEmitter & Vim> {
         '--embed'
     ], {});
     const base = new EventEmitter();
-    const pending: (Function | null)[] = Array.from(new Array(100)).map(() => null);
+    const pending: ([Function, Function] | null)[] = Array.from(new Array(100)).map(() => null);
     nvim_proc.stdout.on('data', newData);
     return request('nvim_get_api_info').then((api: any[]) => {
         const data = api[1];
@@ -31,17 +31,17 @@ export function run(): Promise<EventEmitter & Vim> {
         const instance = fns.reduce((prev, { name }) => {
             (prev as any)[name] = request.bind(null, name);
             return prev;
-        }, { quit: () => { request('nvim_command', ['!qa']); } } as Vim);
+        }, { quit, raw } as Vim);
         return Object.assign(base, instance);
     });
-
+    function quit() {
+        return request('nvim_command', ['!qa']);
+    }
     function newData(buf: Buffer) {
-        try {
+        if (process.env.NODE_ENV !== 'production') {
+            tryCatchVoid(decodeMulti)(buf, runSingle);
+        } else {
             decodeMulti(buf, runSingle);
-        } catch (err) {
-            err;
-            debugger;
-            return;
         }
     }
 
@@ -61,32 +61,21 @@ export function run(): Promise<EventEmitter & Vim> {
             //   - msg[3]: result(if not errored)
             const id = msg[1];
             const handler = get(id);
-            release(id);
-            handler(msg[2], msg[3]);
+            if (msg[2]) {
+                handler[0](msg[2]);
+            } else {
+                handler[1](msg[3]);
+            }
         }
         else if (msgType === 2) {
-
             // notification/event
             //   - msg[1]: event name
             //   - msg[2]: arguments
-            if (msg[1] === 'redraw') {
-                const cur = msg[2] as any[];
-                for (let i = 0; i < cur.length; i++) {
-                    const events = cur[i];
-                    const ev = events[0];
-                    for (let j = 1; j < events.length; j++) {
-                        const args = events[j];
-                        if (!base.emit(ev, args)) {
-                            console.log(ev);
-                        }
-                    }
-                }
+            if (process.env.NODE_ENV !== 'production') {
+                tryCatchVoid(cb)(msg[1], msg[2]);
             } else {
-                if (!base.emit(msg[1], msg[2])) {
-                    debugger;
-                }
+                cb(msg[1], msg[2]);
             }
-
         }
         else {
             send([1, 0, 'Invalid message type', null]);
@@ -94,23 +83,18 @@ export function run(): Promise<EventEmitter & Vim> {
     }
 
     function send(value: unknown) {
-        nvim_proc.stdin.write(encode(value, opts));
-    }
-    function request(method: string, ...args: any[]) {
-        return new Promise<any>((resolve, reject) => {
-            send([0, getId((e: any, v: any) => {
-                if (e) {
-                    method;
-                    args;
-                    debugger;
-                    reject(e);
-                } else {
-                    resolve(v);
-                }
-            }), method, args]);
-        });
+        raw(encode(value, opts));
     }
 
+    function raw(value: string | Uint8Array) {
+        nvim_proc.stdin.write(value);
+    }
+    
+    function request(method: string, ...args: any[]) {
+        return new Promise<any>((resolve, reject) => {
+            send([0, put([resolve, reject]), method, args]);
+        });
+    }
 
     function get(id: number) {
         if (id > pending.length) {
@@ -118,21 +102,16 @@ export function run(): Promise<EventEmitter & Vim> {
         }
         const cur = pending[id];
         if (cur) {
+            lastId = id;
+            pending[id] = null;
             return cur;
         }
 
         throw new Error('Invalid id');
     }
-    function release(id: number) {
-        // delete pending2[id];
-        if (id > pending.length) {
-            throw new Error('Invalid id');
-        }
-        lastId = id;
-        pending[id] = null;
-    }
 
-    function getId(cb: Function) {
+
+    function put(cb: [Function, Function]) {
         // pending2[id++] = cb;
         // return id - 1;
         if (lastId === -1) {

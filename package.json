@@ -13,7 +13,8 @@
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "bin": "node ./bin/ts-node"
   },
   "engines": {
     "vscode": "^1.46.0"
@@ -34,856 +35,550 @@
     ],
     "keybindings": [
       {
-        "args": "27",
-        "command": "evil.key",
+        "key": "tab",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Tab>"
+      },
+      {
         "key": "escape",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Esc>"
       },
       {
-        "args": "127",
-        "command": "evil.key",
-        "key": "ctrl+0",
-        "when": "editorTextFocus"
+        "key": "delete",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Del>"
       },
       {
-        "args": "128",
-        "command": "evil.key",
-        "key": "ctrl+1",
-        "when": "editorTextFocus"
+        "key": "insert",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Insert>"
       },
       {
-        "args": "129",
-        "command": "evil.key",
-        "key": "ctrl+2",
-        "when": "editorTextFocus"
+        "key": "left",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Left>"
       },
       {
-        "args": "130",
-        "command": "evil.key",
-        "key": "ctrl+3",
-        "when": "editorTextFocus"
+        "key": "right",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Right>"
       },
       {
-        "args": "131",
-        "command": "evil.key",
-        "key": "ctrl+4",
-        "when": "editorTextFocus"
+        "key": "up",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Up>"
       },
       {
-        "args": "132",
-        "command": "evil.key",
-        "key": "ctrl+5",
-        "when": "editorTextFocus"
+        "key": "down",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Down>"
       },
       {
-        "args": "133",
-        "command": "evil.key",
-        "key": "ctrl+6",
-        "when": "editorTextFocus"
+        "key": "pageup",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<PageUp>"
       },
       {
-        "args": "134",
-        "command": "evil.key",
-        "key": "ctrl+7",
-        "when": "editorTextFocus"
+        "key": "pagedown",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<PageDown>"
       },
       {
-        "args": "135",
-        "command": "evil.key",
-        "key": "ctrl+8",
-        "when": "editorTextFocus"
+        "key": "home",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<Home>"
       },
       {
-        "args": "136",
-        "command": "evil.key",
-        "key": "ctrl+9",
-        "when": "editorTextFocus"
+        "key": "end",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<End>"
       },
       {
-        "args": "137",
-        "command": "evil.key",
-        "key": "ctrl+`",
-        "when": "editorTextFocus"
+        "key": "ctrl+space",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Space>"
       },
       {
-        "args": "138",
-        "command": "evil.key",
         "key": "ctrl+-",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-->"
       },
       {
-        "args": "139",
-        "command": "evil.key",
         "key": "ctrl+=",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-=>"
       },
       {
-        "args": 17,
-        "command": "evil.key",
         "key": "ctrl+q",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-q>"
       },
       {
-        "args": 23,
-        "command": "evil.key",
         "key": "ctrl+w",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-w>"
       },
       {
-        "args": 5,
-        "command": "evil.key",
         "key": "ctrl+e",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-e>"
       },
       {
-        "args": 18,
-        "command": "evil.key",
         "key": "ctrl+r",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-r>"
       },
       {
-        "args": 20,
-        "command": "evil.key",
         "key": "ctrl+t",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-t>"
       },
       {
-        "args": 25,
-        "command": "evil.key",
         "key": "ctrl+y",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-y>"
       },
       {
-        "args": 21,
-        "command": "evil.key",
         "key": "ctrl+u",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-u>"
       },
       {
-        "args": 9,
-        "command": "evil.key",
         "key": "ctrl+i",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-i>"
       },
       {
-        "args": 15,
-        "command": "evil.key",
         "key": "ctrl+o",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-o>"
       },
       {
-        "args": 16,
-        "command": "evil.key",
         "key": "ctrl+p",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-p>"
       },
       {
-        "args": "140",
-        "command": "evil.key",
         "key": "ctrl+[",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-[>"
       },
       {
-        "args": 29,
-        "command": "evil.key",
         "key": "ctrl+]",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-]>"
       },
       {
-        "args": 28,
-        "command": "evil.key",
         "key": "ctrl+\\",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Bslash>"
       },
       {
-        "args": 1,
-        "command": "evil.key",
         "key": "ctrl+a",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-a>"
       },
       {
-        "args": 19,
-        "command": "evil.key",
         "key": "ctrl+s",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-s>"
       },
       {
-        "args": 4,
-        "command": "evil.key",
         "key": "ctrl+d",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-d>"
       },
       {
-        "args": 6,
-        "command": "evil.key",
         "key": "ctrl+f",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-f>"
       },
       {
-        "args": 7,
-        "command": "evil.key",
         "key": "ctrl+g",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-g>"
       },
       {
-        "args": 8,
-        "command": "evil.key",
         "key": "ctrl+h",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-h>"
       },
       {
-        "args": 10,
-        "command": "evil.key",
         "key": "ctrl+j",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-j>"
       },
       {
-        "args": 11,
-        "command": "evil.key",
         "key": "ctrl+k",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-k>"
       },
       {
-        "args": 12,
-        "command": "evil.key",
         "key": "ctrl+l",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-l>"
       },
       {
-        "args": "141",
-        "command": "evil.key",
-        "key": "ctrl+;",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "142",
-        "command": "evil.key",
-        "key": "ctrl+'",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": 26,
-        "command": "evil.key",
         "key": "ctrl+z",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-z>"
       },
       {
-        "args": 24,
-        "command": "evil.key",
         "key": "ctrl+x",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-x>"
       },
       {
-        "args": 3,
-        "command": "evil.key",
         "key": "ctrl+c",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-c>"
       },
       {
-        "args": 22,
-        "command": "evil.key",
         "key": "ctrl+v",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-v>"
       },
       {
-        "args": 2,
-        "command": "evil.key",
         "key": "ctrl+b",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-b>"
       },
       {
-        "args": 14,
-        "command": "evil.key",
         "key": "ctrl+n",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-n>"
       },
       {
-        "args": 13,
-        "command": "evil.key",
         "key": "ctrl+m",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-m>"
       },
       {
-        "args": "143",
-        "command": "evil.key",
-        "key": "ctrl+,",
-        "when": "editorTextFocus"
+        "key": "ctrl+)",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-)>"
       },
       {
-        "args": "144",
-        "command": "evil.key",
-        "key": "ctrl+.",
-        "when": "editorTextFocus"
+        "key": "ctrl+!",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-!>"
       },
       {
-        "args": "145",
-        "command": "evil.key",
-        "key": "ctrl+/",
-        "when": "editorTextFocus"
+        "key": "ctrl+@",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-@>"
       },
       {
-        "args": "146",
-        "command": "evil.key",
-        "key": "ctrl+shift+0",
-        "when": "editorTextFocus"
+        "key": "ctrl+#",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-#>"
       },
       {
-        "args": "147",
-        "command": "evil.key",
-        "key": "ctrl+shift+1",
-        "when": "editorTextFocus"
+        "key": "ctrl+$",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-$>"
       },
       {
-        "args": "148",
-        "command": "evil.key",
-        "key": "ctrl+shift+2",
-        "when": "editorTextFocus"
+        "key": "ctrl+%",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-%>"
       },
       {
-        "args": "149",
-        "command": "evil.key",
-        "key": "ctrl+shift+3",
-        "when": "editorTextFocus"
+        "key": "ctrl+^",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-^>"
       },
       {
-        "args": "150",
-        "command": "evil.key",
-        "key": "ctrl+shift+4",
-        "when": "editorTextFocus"
+        "key": "ctrl+&",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-&>"
       },
       {
-        "args": "151",
-        "command": "evil.key",
-        "key": "ctrl+shift+5",
-        "when": "editorTextFocus"
+        "key": "ctrl+*",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-*>"
       },
       {
-        "args": "152",
-        "command": "evil.key",
-        "key": "ctrl+shift+6",
-        "when": "editorTextFocus"
+        "key": "ctrl+(",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-(>"
       },
       {
-        "args": "153",
-        "command": "evil.key",
-        "key": "ctrl+shift+7",
-        "when": "editorTextFocus"
+        "key": "ctrl+~",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-~>"
       },
       {
-        "args": "154",
-        "command": "evil.key",
-        "key": "ctrl+shift+8",
-        "when": "editorTextFocus"
+        "key": "ctrl+_",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-_>"
       },
       {
-        "args": "155",
-        "command": "evil.key",
-        "key": "ctrl+shift+9",
-        "when": "editorTextFocus"
+        "key": "ctrl++",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-+>"
       },
       {
-        "args": "156",
-        "command": "evil.key",
-        "key": "ctrl+shift+`",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "157",
-        "command": "evil.key",
-        "key": "ctrl+shift+-",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "158",
-        "command": "evil.key",
-        "key": "ctrl+shift+=",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "159",
-        "command": "evil.key",
         "key": "ctrl+shift+q",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Q>"
       },
       {
-        "args": "160",
-        "command": "evil.key",
         "key": "ctrl+shift+w",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-W>"
       },
       {
-        "args": "161",
-        "command": "evil.key",
         "key": "ctrl+shift+e",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-E>"
       },
       {
-        "args": "162",
-        "command": "evil.key",
         "key": "ctrl+shift+r",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-R>"
       },
       {
-        "args": "163",
-        "command": "evil.key",
         "key": "ctrl+shift+t",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-T>"
       },
       {
-        "args": "164",
-        "command": "evil.key",
         "key": "ctrl+shift+y",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Y>"
       },
       {
-        "args": "165",
-        "command": "evil.key",
         "key": "ctrl+shift+u",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-U>"
       },
       {
-        "args": "166",
-        "command": "evil.key",
         "key": "ctrl+shift+i",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-I>"
       },
       {
-        "args": "167",
-        "command": "evil.key",
         "key": "ctrl+shift+o",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-O>"
       },
       {
-        "args": "168",
-        "command": "evil.key",
         "key": "ctrl+shift+p",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-P>"
       },
       {
-        "args": "169",
-        "command": "evil.key",
-        "key": "ctrl+shift+[",
-        "when": "editorTextFocus"
+        "key": "ctrl+{",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-{>"
       },
       {
-        "args": "170",
-        "command": "evil.key",
-        "key": "ctrl+shift+]",
-        "when": "editorTextFocus"
+        "key": "ctrl+}",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-}>"
       },
       {
-        "args": "171",
-        "command": "evil.key",
-        "key": "ctrl+shift+\\",
-        "when": "editorTextFocus"
+        "key": "ctrl+|",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Bar>"
       },
       {
-        "args": "172",
-        "command": "evil.key",
         "key": "ctrl+shift+a",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-A>"
       },
       {
-        "args": "173",
-        "command": "evil.key",
         "key": "ctrl+shift+s",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-S>"
       },
       {
-        "args": "174",
-        "command": "evil.key",
         "key": "ctrl+shift+d",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-D>"
       },
       {
-        "args": "175",
-        "command": "evil.key",
         "key": "ctrl+shift+f",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-F>"
       },
       {
-        "args": "176",
-        "command": "evil.key",
         "key": "ctrl+shift+g",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-G>"
       },
       {
-        "args": "177",
-        "command": "evil.key",
         "key": "ctrl+shift+h",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-H>"
       },
       {
-        "args": "178",
-        "command": "evil.key",
         "key": "ctrl+shift+j",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-J>"
       },
       {
-        "args": "179",
-        "command": "evil.key",
         "key": "ctrl+shift+k",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-K>"
       },
       {
-        "args": "180",
-        "command": "evil.key",
         "key": "ctrl+shift+l",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-L>"
       },
       {
-        "args": "181",
-        "command": "evil.key",
-        "key": "ctrl+shift+;",
-        "when": "editorTextFocus"
+        "key": "ctrl+:",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-:>"
       },
       {
-        "args": "182",
-        "command": "evil.key",
-        "key": "ctrl+shift+'",
-        "when": "editorTextFocus"
+        "key": "ctrl+\"",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-\">"
       },
       {
-        "args": "183",
-        "command": "evil.key",
         "key": "ctrl+shift+z",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-Z>"
       },
       {
-        "args": "184",
-        "command": "evil.key",
         "key": "ctrl+shift+x",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-X>"
       },
       {
-        "args": "185",
-        "command": "evil.key",
         "key": "ctrl+shift+c",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-C>"
       },
       {
-        "args": "186",
-        "command": "evil.key",
         "key": "ctrl+shift+v",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-V>"
       },
       {
-        "args": "187",
-        "command": "evil.key",
         "key": "ctrl+shift+b",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-B>"
       },
       {
-        "args": "188",
-        "command": "evil.key",
         "key": "ctrl+shift+n",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-N>"
       },
       {
-        "args": "189",
-        "command": "evil.key",
         "key": "ctrl+shift+m",
-        "when": "editorTextFocus"
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-M>"
       },
       {
-        "args": "190",
-        "command": "evil.key",
-        "key": "ctrl+shift+,",
-        "when": "editorTextFocus"
+        "key": "ctrl+<",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-lt>"
       },
       {
-        "args": "191",
-        "command": "evil.key",
-        "key": "ctrl+shift+.",
-        "when": "editorTextFocus"
+        "key": "ctrl+>",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C->>"
       },
       {
-        "args": "192",
-        "command": "evil.key",
-        "key": "ctrl+shift+/",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "193",
-        "command": "evil.key",
-        "key": "alt+0",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "194",
-        "command": "evil.key",
-        "key": "alt+1",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "195",
-        "command": "evil.key",
-        "key": "alt+2",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "196",
-        "command": "evil.key",
-        "key": "alt+3",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "197",
-        "command": "evil.key",
-        "key": "alt+4",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "198",
-        "command": "evil.key",
-        "key": "alt+5",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "199",
-        "command": "evil.key",
-        "key": "alt+6",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "200",
-        "command": "evil.key",
-        "key": "alt+7",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "201",
-        "command": "evil.key",
-        "key": "alt+8",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "202",
-        "command": "evil.key",
-        "key": "alt+9",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "203",
-        "command": "evil.key",
-        "key": "alt+`",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "204",
-        "command": "evil.key",
-        "key": "alt+-",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "205",
-        "command": "evil.key",
-        "key": "alt+=",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "206",
-        "command": "evil.key",
-        "key": "alt+q",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "207",
-        "command": "evil.key",
-        "key": "alt+w",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "208",
-        "command": "evil.key",
-        "key": "alt+e",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "209",
-        "command": "evil.key",
-        "key": "alt+r",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "210",
-        "command": "evil.key",
-        "key": "alt+t",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "211",
-        "command": "evil.key",
-        "key": "alt+y",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "212",
-        "command": "evil.key",
-        "key": "alt+u",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "213",
-        "command": "evil.key",
-        "key": "alt+i",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "214",
-        "command": "evil.key",
-        "key": "alt+o",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "215",
-        "command": "evil.key",
-        "key": "alt+p",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "216",
-        "command": "evil.key",
-        "key": "alt+[",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "217",
-        "command": "evil.key",
-        "key": "alt+]",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "218",
-        "command": "evil.key",
-        "key": "alt+\\",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "219",
-        "command": "evil.key",
-        "key": "alt+a",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "220",
-        "command": "evil.key",
-        "key": "alt+s",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "221",
-        "command": "evil.key",
-        "key": "alt+d",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "222",
-        "command": "evil.key",
-        "key": "alt+f",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "223",
-        "command": "evil.key",
-        "key": "alt+g",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "224",
-        "command": "evil.key",
-        "key": "alt+h",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "225",
-        "command": "evil.key",
-        "key": "alt+j",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "226",
-        "command": "evil.key",
-        "key": "alt+k",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "227",
-        "command": "evil.key",
-        "key": "alt+l",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "228",
-        "command": "evil.key",
-        "key": "alt+;",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "229",
-        "command": "evil.key",
-        "key": "alt+'",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "230",
-        "command": "evil.key",
-        "key": "alt+z",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "231",
-        "command": "evil.key",
-        "key": "alt+x",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "232",
-        "command": "evil.key",
-        "key": "alt+c",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "233",
-        "command": "evil.key",
-        "key": "alt+v",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "234",
-        "command": "evil.key",
-        "key": "alt+b",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "235",
-        "command": "evil.key",
-        "key": "alt+n",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "236",
-        "command": "evil.key",
-        "key": "alt+m",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "237",
-        "command": "evil.key",
-        "key": "alt+,",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "238",
-        "command": "evil.key",
-        "key": "alt+.",
-        "when": "editorTextFocus"
-      },
-      {
-        "args": "239",
-        "command": "evil.key",
-        "key": "alt+/",
-        "when": "editorTextFocus"
+        "key": "ctrl+?",
+        "command": "evil.nvim_input",
+        "when": "editorTextFocus",
+        "args": "<C-?>"
       }
     ]
   },
@@ -897,6 +592,7 @@
     "eslint": "^6.8.0",
     "glob": "^7.1.6",
     "mocha": "^7.1.2",
+    "ts-node": "^8.10.2",
     "typescript": "^3.8.3",
     "vscode-test": "^1.3.0"
   },

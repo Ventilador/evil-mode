@@ -6,16 +6,16 @@ export type ParsedMode = {
     text: string;
     color: string | undefined;
     cursor: TextEditorCursorStyle;
-}
+};
 export type Mode = 'normal' | 'insert' | 'visual-block' | 'visual-line' | 'visual' | 'replace';
 export function support_mode(runtime: ExtensionRuntime, vim: Vim): void {
     vim.on('mode_change', () => {
         getLatestMode().then(parseMode).then(runtime.modeChanged);
     });
 
-    vim.on('mode_info_set', info => {
-        debugger;
-    });
+    // vim.on('mode_info_set', info => {
+    //     debugger;
+    // });
     /**
      * switch (mode) {
             case 'replace':

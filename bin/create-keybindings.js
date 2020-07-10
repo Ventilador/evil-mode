@@ -42,7 +42,8 @@ Object.keys(none).forEach(item => {
         json.contributes.keybindings.push({
             args: found.keycode,
             command: 'evil.key',
-            key: 'ctrl+' + item
+            key: 'ctrl+' + item,
+            when: "editorTextFocus"
         });
     } else {
         const code = asArray.length;
@@ -56,7 +57,8 @@ Object.keys(none).forEach(item => {
         json.contributes.keybindings.push({
             args: code.toString(),
             command: 'evil.key',
-            key: 'ctrl+' + item
+            key: 'ctrl+' + item,
+            when: "editorTextFocus"
         });
     }
 });
@@ -74,7 +76,8 @@ Object.keys(none).forEach(item => {
     json.contributes.keybindings.push({
         args: code.toString(),
         command: 'evil.key',
-        key: 'ctrl+shift+' + item
+        key: 'ctrl+shift+' + item,
+        when: "editorTextFocus"
     });
 });
 Object.keys(none).forEach(item => {
@@ -83,7 +86,8 @@ Object.keys(none).forEach(item => {
         json.contributes.keybindings.push({
             args: found.keycode.toString(),
             command: 'evil.key',
-            key: 'alt+' + item
+            key: 'alt+' + item,
+            when: "editorTextFocus"
         });
     } else {
         const code = asArray.length;
@@ -97,7 +101,8 @@ Object.keys(none).forEach(item => {
         json.contributes.keybindings.push({
             args: code.toString(),
             command: 'evil.key',
-            key: 'alt+' + item
+            key: 'alt+' + item,
+            when: "editorTextFocus"
         });
     }
 });
@@ -204,9 +209,4 @@ export function fromCode(code: number) {
 debugger;
 
 writeFileSync('src/keys/index.ts', ts);
-const when = {
-    when: "editorTextFocus"
-};
-json.contributes.keybindings = json.contributes.keybindings.map(i => Object.assign(i, when));
-
 writeFileSync('package.json', JSON.stringify(json, undefined, 2));

@@ -2,7 +2,7 @@ import * as v from 'vscode';
 
 export class Disposable implements v.Disposable {
     private _$subs: v.Disposable[] = [];
-    static Dispose(val: Disposable) {
+    static Dispose(val: Disposable | v.Disposable) {
         val.dispose();
     }
     constructor() {
