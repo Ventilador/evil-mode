@@ -1,5 +1,4 @@
 // @ts-check
-require('./inspector');
 
 const none = require('./key-maps/none.json');
 const ctrl = require('./key-maps/ctrl.json');

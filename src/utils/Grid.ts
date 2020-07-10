@@ -2,21 +2,40 @@ import { Disposable } from "../new/disposable";
 import { ExtensionRuntime } from "../new/ExtensionRuntime";
 import { Position, Range, commands, Selection, TextEditorCursorStyle, TextEditor, TextEditorDecorationType, ThemeColor, window } from "vscode";
 import { TwoWayDocument } from "../new/TwoWayDocument";
-
+import { Runtime } from "../runtime";
+import { Tab, Buf } from "./mappers";
+export type GridConstructorArg = {
+    editor: TextEditor;
+    runtime: Runtime;
+    tab: Tab;
+    buf: Buf;
+    id: number
+}
 export class HighlightGrid extends Disposable {
     private cachedLines: CachedLine[] = [];
     private queued = false;
+    public readonly editor: TextEditor;
+    public readonly runtime: Runtime;
+    public readonly tab: Tab;
+    public readonly buf: Buf;
+    public readonly id: number;
     moveCursor: (row: number, col: number) => any;
-    constructor(private doc: TwoWayDocument, private runtime: ExtensionRuntime) {
+    constructor({ runtime, editor, buf, tab, id }: GridConstructorArg) {
         super();
-        const editor = doc.editor;
+        this.runtime = runtime;
+        this.editor = editor;
+        this.buf = buf;
+        this.tab = tab;
+        this.id = id;
         this.moveCursor = (row, col) => {
-            editor.selection = new Selection(new Position(row, col), new Position(row, col));
+            if (editor === window.activeTextEditor) {
+                editor.selection = new Selection(new Position(row, col), new Position(row, col));
+            }
         };
     }
 
     cursorStyle(style: TextEditorCursorStyle) {
-        this.doc.editor.options.cursorStyle = style;
+        this.editor.options.cursorStyle = style;
     }
 
     addHighlight(row: number, col: number, span: number) {
@@ -33,7 +52,7 @@ export class HighlightGrid extends Disposable {
     record() {
         if (!this.queued) {
             this.queued = true;
-            this.runtime.changes.add(this.flush);
+            this.runtime.nextTick(this.flush);
         }
     }
 
@@ -55,7 +74,8 @@ export class HighlightGrid extends Disposable {
 
     private flush = () => {
         this.queued = false;
-        this.doc.editor.setDecorations(this.doc.selectDecorator, this.cachedLines.reduce((prev, cur) => {
+        // TODO
+        this.editor.setDecorations(this.flush as any, this.cachedLines.reduce((prev, cur) => {
             return prev.concat(cur.selections());
         }, [] as Range[]));
     };

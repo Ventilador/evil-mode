@@ -23,7 +23,7 @@ export class TwoWayDocument extends Disposable {
         this.runtime = runtime;
         this.runtime.active = this;
         this.editor = editor;
-        this.grid = new HighlightGrid(this, runtime);
+        // this.grid = new HighlightGrid(this, runtime);
         this.selectDecorator = window.createTextEditorDecorationType({
             backgroundColor: new ThemeColor('editor.selectionBackground'),
         });
@@ -71,7 +71,7 @@ export class TwoWayDocument extends Disposable {
     }
 
     activate() {
-        return this.runtime.instance.nvim_set_current_tabpage(this.tabId);
+        // return this.runtime.instance.nvim_set_current_tabpage(this.tabId);
     }
 }
 
@@ -82,14 +82,14 @@ function setReadonly<T, Key extends keyof T>(val: T, key: Key, value: T[Key]) {
 function startLooping(buf: Buffer, ed: TextEditor, vim: Vim) {
     setTimeout(fn, 0);
     async function fn() {
-        const lines = await vim.nvim_buf_get_lines(buf, 0, -1, true);
-        const others = getDocLines(ed);
+        // const lines = await vim.nvim_buf_get_lines(buf, 0, -1, true);
+        // const others = getDocLines(ed);
 
-        others.forEach((text, i) => {
-            if (lines[i] !== text) {
-                text;
-            }
-        });
+        // others.forEach((text, i) => {
+        //     if (lines[i] !== text) {
+        //         text;
+        //     }
+        // });
         setTimeout(fn, 1000);
     }
 }

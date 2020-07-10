@@ -21,7 +21,7 @@ export class Buf extends Extern {
 }
 (Buf as any).prototype['__val'] = 'buf';
 
-export class Window extends Extern {
+export class Win extends Extern {
     static encode(input: any) {
         if (input.__val === 'win') {
             return encode(input.id);
@@ -29,13 +29,13 @@ export class Window extends Extern {
         return null;
     }
     static decode(data: any) {
-        return new Window(decode(data) as number);
+        return new Win(decode(data) as number);
     }
     static type = 1;
 
     private __hook!: 'win';
 }
-(Window as any).prototype['__val'] = 'win';
+(Win as any).prototype['__val'] = 'win';
 
 export class Tab extends Extern {
     static encode(input: any) {
@@ -54,5 +54,5 @@ export class Tab extends Extern {
 
 
 extensionCodec.register(Buf);
-extensionCodec.register(Window);
+extensionCodec.register(Win);
 extensionCodec.register(Tab);

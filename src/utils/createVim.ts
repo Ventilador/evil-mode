@@ -9,7 +9,6 @@ import { tab_switch } from "../new/tasks/vscode_to_vim/tab_switch";
 import { patch_events } from "../new/tasks/vim_to_vscode/patch_events";
 import { patch_keybindings } from "../new/tasks/inits/patch_keybindings";
 import { update_mode } from "../new/tasks/vscode_status_bar/update_mode";
-import { support_highlight } from "../new/tasks/vim_to_vscode/support_highlight";
 import { paint } from "../new/tasks/vim_to_vscode/paint";
 import { noop } from "./noop";
 import { baseOptions } from "./vimrc";
@@ -27,7 +26,6 @@ export function createVim(runtime: ExtensionRuntime): Promise<any> {
         paint(runtime, instance);
         support_mode(runtime, instance);
         move_cursor(runtime, instance);
-        support_highlight(runtime, instance);
         override_keyboard(runtime, instance);
         tab_switch(runtime, instance);
         patch_keybindings(runtime, instance);

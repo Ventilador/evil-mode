@@ -10,9 +10,7 @@ export function grid_line(vim: Vim, runtime: Runtime) {
             grid.update(row, col, data);
         } else if (runtime.lookingForAGrid && runtime.lookingForAGrid(gridId, row, col, data)) {
             grids[gridId].update(row, col, data);
-        } else {
-            debugger;
-        }
+        } 
         // if (runtime.creatingDocument) {
         //     runtime.creatingDocument(arg);
         //     return;

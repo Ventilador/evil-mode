@@ -23,7 +23,7 @@ export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
         '--embed'
     ], {});
     const base = new EventEmitter();
-    const pending: ([Function, Function] | null)[] = Array.from(new Array(100)).map(() => null);
+    const pending: ([Function, Function, ...any[]] | null)[] = Array.from(new Array(100)).map(() => null);
     nvim_proc.stdout.on('data', newData);
     return request('nvim_get_api_info').then((api: any[]) => {
         const data = api[1];
@@ -62,9 +62,9 @@ export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
             const id = msg[1];
             const handler = get(id);
             if (msg[2]) {
-                handler[0](msg[2]);
+                handler[1](msg[2]);
             } else {
-                handler[1](msg[3]);
+                handler[0](msg[3]);
             }
         }
         else if (msgType === 2) {
@@ -89,11 +89,17 @@ export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
     function raw(value: string | Uint8Array) {
         nvim_proc.stdin.write(value);
     }
-    
+
     function request(method: string, ...args: any[]) {
-        return new Promise<any>((resolve, reject) => {
-            send([0, put([resolve, reject]), method, args]);
-        });
+        if (process.env.NODE_ENV !== 'production') {
+            return new Promise<any>((resolve, reject) => {
+                send([0, put([resolve, reject, method, args]), method, args]);
+            });
+        } else {
+            return new Promise<any>((resolve, reject) => {
+                send([0, put([resolve, reject]), method, args]);
+            });
+        }
     }
 
     function get(id: number) {
@@ -111,7 +117,7 @@ export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
     }
 
 
-    function put(cb: [Function, Function]) {
+    function put(cb: [Function, Function, ...any[]]) {
         // pending2[id++] = cb;
         // return id - 1;
         if (lastId === -1) {

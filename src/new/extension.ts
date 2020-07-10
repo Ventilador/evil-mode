@@ -1,6 +1,7 @@
 import { ExtensionContext, commands, Disposable, workspace } from "vscode";
 import { Snitch } from "./snitch";
 import { ExtensionRuntime } from "./ExtensionRuntime";
+import { createRuntime } from "../runtime";
 
 export function activate(context: ExtensionContext) {
     let extensionRuntime: Disposable | undefined;
@@ -8,15 +9,14 @@ export function activate(context: ExtensionContext) {
     if (workspace.getConfiguration('files').get('insertFinalNewline') === false) {
         workspace.getConfiguration('files').update('insertFinalNewline', true);
     }
-   
+
     context.subscriptions.push(commands.registerCommand('evil.enable', () => {
         if (extensionRuntime) {
             Snitch.warn({ text: 'Already running' });
             return;
         }
         workspace.getConfiguration('evil').update('enabled', true);
-        extensionRuntime = new ExtensionRuntime();
-        context.subscriptions.push(extensionRuntime);
+        createRuntime().then(runtime => context.subscriptions.push(extensionRuntime = runtime));
     }));
 
     context.subscriptions.push(commands.registerCommand('evil.disable', () => {

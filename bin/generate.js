@@ -1,5 +1,4 @@
 // @ts-check
-require('./inspector');
 
 const neo = require('neovim');
 const child = require('child_process');
@@ -66,7 +65,7 @@ function getTypeFor(val) {
         case 'Buffer':
         case 'Window':
         case 'Tabpage':
-            return 'import(\'neovim\').' + val;
+            return 'import(\'../utils/mappers\').' + val.slice(0, 3);
         default:
             const result = /ArrayOf\(([^,]+)(,\s\d+)?\)/.exec(val);
             if (result) {
