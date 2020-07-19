@@ -15,13 +15,14 @@ function decodeMulti(value: any, fn: Function) {
 }
 
 export type OnEvent = (event: string, calls: any[]) => void;
-export function runVim(cb: OnEvent = noop): Promise<Vim> {
+export function runVim(cb: OnEvent = noop): Promise<EventEmitter & Vim> {
     let lastId = -1;
     const nvim_proc = spawn('nvim', [
         '-u', 'NONE',
         '-n',
         '--embed'
     ], {});
+    const base = new EventEmitter();
     const pending: ([Function, Function, ...any[]] | null)[] = Array.from(new Array(100)).map(() => null);
     nvim_proc.stdout.on('data', newData);
     return request('nvim_get_api_info').then((api: any[]) => {
@@ -31,7 +32,7 @@ export function runVim(cb: OnEvent = noop): Promise<Vim> {
             (prev as any)[name] = request.bind(null, name);
             return prev;
         }, { quit, raw } as Vim);
-        return instance;
+        return Object.assign(base, instance);
     });
     function quit() {
         return request('nvim_command', ['!qa']);
@@ -60,10 +61,10 @@ export function runVim(cb: OnEvent = noop): Promise<Vim> {
             //   - msg[3]: result(if not errored)
             const id = msg[1];
             const handler = get(id);
-            if (msg[2]/* error */) {
-                handler[1]/*reject*/(msg[2]);
+            if (msg[2]) {
+                handler[1](msg[2]);
             } else {
-                handler[0]/*resolve*/(msg[3]);
+                handler[0](msg[3]);
             }
         }
         else if (msgType === 2) {

@@ -1,4 +1,4 @@
-import { encode, decode, ExtensionCodec } from '@msgpack/msgpack';
+import { encode, decode, ExtensionCodec, EncodeOptions, DecodeOptions, Decoder } from '@msgpack/msgpack';
 
 export const extensionCodec = new ExtensionCodec();
 

@@ -14,8 +14,7 @@ const vim = neo.attach({
 vim.requestApi().then(res => {
         const api = res[1];
 
-        return `import { EventEmitter } from 'events';        
-export interface Vim extends EventEmitter{
+        return `export interface Vim {
     ${getEvents(api)}
     ${getMethods(api)}
     quit(): Promise<void>;

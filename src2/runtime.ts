@@ -9,6 +9,7 @@ import { Disposable, window, TextEditor } from 'vscode';
 import { Disposable as D } from './new/disposable';
 import { HighlightGrid } from './utils/Grid';
 import { createDocument } from './new2/document';
+import { grid_cursor_goto } from './listeners/grid_cursor_goto';
 export function createRuntime() {
     let first = null as Node<() => void> | null;
     let last = null as Node<() => void> | null;
@@ -19,10 +20,16 @@ export function createRuntime() {
         background: 0,
         special: 0
     };
+    const groups: Record<string, number> = {};
     const listeners = {
         grid_line: undefined,
         mode_change: undefined,
+        grid_cursor_goto: undefined,
         option_set: noop,
+        grid_resize: noop,
+        grid_clear: noop,
+        msg_set_pos: noop,
+        win_pos: noop,
         default_colors_set: function (rgb_fg: number, rgb_bg: number, rgb_sp: number) {
             defaultItems.foreground = rgb_fg;
             defaultItems.background = rgb_bg;
@@ -31,12 +38,9 @@ export function createRuntime() {
         hl_attr_define: function (id: number, rgb_attrs: Record<string, any>, _: unknown, info: any[]) {
             highlights[id] = Object.assign({}, defaultItems, rgb_attrs, info[0]);
         },
-        hl_group_set: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
-        grid_resize: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
-        grid_clear: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
-        msg_set_pos: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
-        win_pos: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
-        grid_cursor_goto: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
+        hl_group_set: function (a: string, b: number) {
+            groups[a] = b;
+        },
         mode_info_set: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
         win_hide: function (a: unknown, b: unknown, c: unknown, d: unknown, e: unknown) { debugger; },
         flush: flushQueue,
@@ -54,6 +58,7 @@ export function createRuntime() {
     return runVim(dispatcher).then((vim) => {
         listeners.grid_line = grid_line(vim, runtime);
         listeners.mode_change = mode_change(vim, runtime);
+        listeners.grid_cursor_goto = grid_cursor_goto(runtime);
         subs.add(window.onDidChangeActiveTextEditor(tabChanged));
         return vim.nvim_ui_attach(200, 200, {
             ext_hlstate: true,
@@ -130,7 +135,7 @@ export function createRuntime() {
         const listener = listeners[event];
         if (listener) {
             for (let j = 1; j < val.length; j++) {
-                listener.apply(null, val[j]);
+                listener.apply(runtime, val[j]);
             }
         } else if (process.env.NODE_ENV !== 'production' && !missedEvents[event]) {
             missedEvents[event] = true;

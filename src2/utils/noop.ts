@@ -1,7 +1,6 @@
-export function noop(...args: any[]): any;
-export function noop(): any { }
+export function noop(...args: any[]): any { }
 let i = noop;
-export function tryCatchVoid<T extends (...args: any[]) => void>(fn: T): T {
+export function tryCatchVoid<T extends (...args: any[]) => any>(fn: T): T {
     i = fn;
     return runVoid as any;
 }
@@ -12,7 +11,6 @@ function runVoid(this: any) {
     } catch (err) {
         err;
         debugger;
-    } finally {
-        i = noop;
+        return;
     }
 }

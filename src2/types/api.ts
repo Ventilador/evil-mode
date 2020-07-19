@@ -1,4 +1,5 @@
-export interface Vim {
+import { EventEmitter } from 'events';        
+export interface Vim extends EventEmitter{
     on(eventName: "mode_info_set", cb: (args: [boolean/*enabled*/, any[]/*cursor_styles*/]) => any): this
 	on(eventName: "update_menu", cb: () => any): this
 	on(eventName: "busy_start", cb: () => any): this
